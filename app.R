@@ -8,42 +8,98 @@
 #
 
 library(shiny)
+library(shinydashboard)
+source("header.R")
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
+clientID <- "7d4e98d5926f47fd887b33c0db094c72"
+clientSecret <- "5274969d76bb4006964b92076acc6194"
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+ui <- dashboardPage(
+    skin = "green",
+    header(),
+    dashboardSidebar(
+        
+        wellPanel(
+            textInput(
+                inputId = "artist_input",
+                label = "Search for an Artist",
+                value = "",
+                width = "100%",
+                placeholder = "ex: The Beatles"
+            ),
+            
+            actionButton(
+                inputId = "search_artists",
+                label = "Search",
+                width = "40%"
+            ),
+            
+            style = "background-color: #111111; margin: 4px"
         ),
+        
+        wellPanel(
+            selectInput(
+                inputId = "artist_selector",
+                label = "Confirm the artist you are looking for",
+                choices = c("---", "neuh1", "neuh2", "neuh3"),
+                selected = "---",
+                multiple = FALSE,
+                width = "100%"
+            ),
+            
+            style = "background-color: #111111; margin: 4px"
+        ),
+        
+        wellPanel(
+            selectInput(
+                inputId = "analysis_selector",
+                label = "Click on the albums to analyze",
+                choices = c("all", "neuh1", "neuh2", "neuh3"),
+                selected = "all",
+                multiple = TRUE,
+                width = "100%",
+            ),
+            
+            style = "background-color: #111111; margin: 4px"
+        ),
+        
+        wellPanel(
+            actionButton(
+                inputId = "submit_button",
+                label = "Analyze!",
+                width = "80%"
+            ),
+            style = "background-color: #111111; margin: 4px"
+        ),
+        
+        wellPanel(
 
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
+            
+            tags$img(
+                src = "rocky.jpg",
+                width = 200,
+                height = 200
+            ),
+            
+            style = "background-color: #111111; margin: 4px"
         )
-    )
+    ),
+    dashboardBody(
+        tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "style.css"))
+    ),
+    title = "Featurefy"
 )
+
+
+
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+    
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    })
+    
 }
+
 
 # Run the application 
 shinyApp(ui = ui, server = server)
