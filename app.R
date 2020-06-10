@@ -103,3 +103,12 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+
+
+
+
+# get a list of artist ids
+#res = search_spotify(q = "asap", type = "artist", market = NULL, limit = 10, offset = 0, include_external = NULL, authorization = token, include_meta_info = FALSE)
+
+
+
