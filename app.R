@@ -12,6 +12,7 @@ library(shinydashboard)
 source("header.R")
 source("data_pipeline.R")
 source("global.R")
+library(httr)
 
 
 ui <- dashboardPage(
@@ -29,7 +30,7 @@ ui <- dashboardPage(
             ),
             
             actionButton(
-                inputId = "search_artists",
+                inputId = "go_button",
                 label = "Search",
                 width = "40%"
             ),
@@ -47,9 +48,6 @@ ui <- dashboardPage(
                 width = "100%"
             ),
             
-            textOutput(
-                outputId = "dummy"
-            ),
             
             style = "background-color: #111111; margin: 4px"
         ),
@@ -59,7 +57,7 @@ ui <- dashboardPage(
                 inputId = "analysis_selector",
                 label = "Click on the albums to analyze",
                 choices = album_names,
-                selected = "all",
+                selected = album_names[3],
                 multiple = TRUE,
                 width = "100%",
             ), 
@@ -154,9 +152,19 @@ ui <- dashboardPage(
             column(
                 width = 5,
 
-                plotOutput(
-                    outputId = "text_mine"
-                )
+                HTML("<span><br><br>Description <br><br> This Web app accesses 
+                     Spotify's API and pulls every album - then every single track by the
+                     artist A$ap Rocky. Spotify provides a rich bounty of information
+                     about its songs. For example, they provide features such as tempo,
+                     danceability, valence (happiness), energy, etc. In total, there are 18
+                     categories provided</span><br><br>Data Pipeline<br><br>
+                     Search request of an artist -> API returns artist id -> request all albums
+                     corresponding to artistID -> API returns list of album ids -> request all
+                     tracks and their enhanced analysis features belonging to each album -> API
+                     returns information for each track -> this web app performs aggregate data analysis
+                     <br><br>Issues<br><br>This is currently hard coded to only retrieve the discography
+                     of a single artist. I was not able to figure out reactive values to take
+                     user input")
             ),
 
             # radio chart
@@ -181,8 +189,23 @@ ui <- dashboardPage(
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
     
-    output$dummy <- renderText(input$artist_input)
+    # ntext <- eventReactive(input$goButton, {
+    #     input$artist_input
+    # })
     
+    # q <- reactive(input$go_button$value)
+    # 
+    # artist_ress <- reactiveValues(retrieve_artists(q))
+    # 
+    
+    # observe({
+    #     ntext
+    #     updateSelectInput(
+    #         session,
+    #         "artist_selector",
+    #         artist_ress$results = retrieve_artists(ntext)
+    #     )
+    # })
     
     output$energy_hist <- renderPlot(plot_energy())
     output$dance_hist <- renderPlot(plot_dance())
@@ -191,7 +214,6 @@ server <- function(input, output, session) {
     output$speech_hist <- renderPlot(plot_speech())
     output$instrumental_hist <- renderPlot(plot_instrum())
     
-    # output$text_mine <- renderPlot(hist(rnorm(100)))
     output$radio_chart <- renderPlot(plot_dance_vs_energy())
         
 }
